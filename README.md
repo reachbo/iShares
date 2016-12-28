@@ -1,4 +1,4 @@
-# Api.ai - sample webhook implementation in Python
+# Api.ai - webhook implementation in Python MVP for iShares Voice Interaction App
 
 This is a really simple webhook implementation that gets Api.ai classification JSON (i.e. a JSON output of Api.ai /query endpoint) and returns a fulfillment response.
 
