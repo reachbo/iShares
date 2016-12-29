@@ -40,14 +40,14 @@ def processRequest(req):
         res = makeWebhookResult(data)
         return res
     elif req.get("result").get("action") == "tellMeAbout":
-        with open('ProductScreener.csv', 'rbU') as f:
-            reader = csv.reader(f)
-            your_list = list(reader)
         res = tellMeAbout("iShares MSCI Emerging Markets ETF")
         return res
 
 
 def tellMeAbout(fund_name):
+    with open('ProductScreener.csv', 'rbU') as f:
+        reader = csv.reader(f)
+        your_list = list(reader)
     for fund in your_list:
         if fund[1] == fund_name:
             speech = "The " + fund_name + " is a " + fund[7] + " " + fund[8] + \
