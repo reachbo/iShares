@@ -41,7 +41,12 @@ def processRequest(req):
         res = makeWebhookResult(data)
         return res
     elif req.get("result").get("action") == "tellMeAbout":
-        res = tellMeAbout("iShares MSCI Emerging Markets ETF")
+        result = req.get("result")
+        parameters = result.get("parameters")
+        fund_name = parameters.get("Fund")
+        if fund_name is None:
+            return None
+        res = tellMeAbout(fund_name)
         return res
 
 
