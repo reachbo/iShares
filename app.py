@@ -29,17 +29,38 @@ def webhook():
 
 
 def processRequest(req):
-    if req.get("result").get("action") != "yahooWeatherForecast":
-        return {}
-    baseurl = "https://query.yahooapis.com/v1/public/yql?"
-    yql_query = makeYqlQuery(req)
-    if yql_query is None:
-        return {}
-    yql_url = baseurl + urllib.urlencode({'q': yql_query}) + "&format=json"
-    result = urllib.urlopen(yql_url).read()
-    data = json.loads(result)
-    res = makeWebhookResult(data)
-    return res
+    if req.get("result").get("action") == "yahooWeatherForecast":
+        baseurl = "https://query.yahooapis.com/v1/public/yql?"
+        yql_query = makeYqlQuery(req)
+        if yql_query is None:
+            return {}
+        yql_url = baseurl + urllib.urlencode({'q': yql_query}) + "&format=json"
+        result = urllib.urlopen(yql_url).read()
+        data = json.loads(result)
+        res = makeWebhookResult(data)
+        return res
+    elif req.get("result").get("action") == "tellMeAbout":
+        with open('ProductScreener.csv', 'rbU') as f:
+            reader = csv.reader(f)
+            your_list = list(reader)
+        res = tellMeAbout("iShares MSCI Emerging Markets ETF")
+        return res
+
+
+def tellMeAbout(fund_name):
+    for fund in your_list:
+        if fund[1] == fund_name:
+            speech = "The " + fund_name + " is a " + fund[7] + " " + fund[8] + \
+                " ETF created on " + fund[6] + " with a trailing 5 year monthly return of " + \
+                fund[38] + "% that costs " + fund[47] + "% annually."
+    return {
+        "speech": speech,
+        "displayText": speech,
+        # "data": data,
+        # "contextOut": [],
+        "source": "bolu-iShares-webhook-mvp"
+    }
+
 
 
 def makeYqlQuery(req):
@@ -99,22 +120,8 @@ if __name__ == '__main__':
 
     app.run(debug=False, port=port, host='0.0.0.0')
 
-def sec_yield(fund_name):
+def secYield(fund_name):
     for fund in your_list:
         if fund[1] == fund_name:
             print fund[42]
 
-def tell_me_about(fund_name):
-    for fund in your_list:
-        if fund[1] == fund_name:
-            speech = "The " + fund_name + " is a " + fund[7] + " " + fund[8] + \
-                " ETF created on " + fund[6] + " with a trailing 5 year monthly return of " + \
-                fund[38] + "% that costs " + fund[47] + "% annually."
-    print speech
-
-
-with open('ProductScreener.csv', 'rbU') as f:
-    reader = csv.reader(f)
-    your_list = list(reader)
-    print your_list[0][0]
-    tell_me_about("iShares MSCI Emerging Markets ETF")
