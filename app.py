@@ -98,3 +98,23 @@ if __name__ == '__main__':
     print "Starting app on port %d" % port
 
     app.run(debug=False, port=port, host='0.0.0.0')
+
+def sec_yield(fund_name):
+    for fund in your_list:
+        if fund[1] == fund_name:
+            print fund[42]
+
+def tell_me_about(fund_name):
+    for fund in your_list:
+        if fund[1] == fund_name:
+            speech = "The " + fund_name + " is a " + fund[7] + " " + fund[8] + \
+                " ETF created on " + fund[6] + " with a trailing 5 year monthly return of " + \
+                fund[38] + "% that costs " + fund[47] + "% annually."
+    print speech
+
+
+with open('ProductScreener.csv', 'rbU') as f:
+    reader = csv.reader(f)
+    your_list = list(reader)
+    print your_list[0][0]
+    tell_me_about("iShares MSCI Emerging Markets ETF")
