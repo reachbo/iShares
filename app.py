@@ -48,6 +48,45 @@ def processRequest(req):
             return None
         res = tellMeAbout(fund_name)
         return res
+    elif req.get("result").get("action") == "findStrategy":
+        result = req.get("result")
+        parameters = result.get("parameters")
+        strategy = parameters.get("strategy")
+        if strategy is None:
+            return None
+        res = findStrategy(strategy)
+        return res
+
+
+def findStrategy(strategy):
+    with open('ProductScreener.csv', 'rbU') as f:
+        reader = csv.reader(f)
+        your_list = list(reader)
+        #now split the strategy column into its own list & strip leading whitespaces
+        #   so that later we can find if a strategy exists in that list for a fund
+        for row in your_list:
+            row[9] = row[9].split(",")
+            row[9] = [strategy_string.lstrip() for strategy_string in row[9]]
+    # Strategy is column 10 or index 9 in the list
+    list_of_funds_in_this_strategy = [x for x in your_list if strategy in x[9]]
+    list_of_included_asset_classes = []
+    for fund in list_of_funds_in_this_strategy:
+        if fund[8] not in list_of_included_asset_classes:
+            list_of_included_asset_classes.append(fund[8])
+    print list_of_included_asset_classes
+    print isinstance(list_of_included_asset_classes[1],str)
+    speech = "Actually, we have an entire strategy built around " + strategy + \
+        ". There are " + str(len(list_of_funds_in_this_strategy)) + \
+        " ETFs that implement this strategy covering everything from " + \
+        list_of_included_asset_classes[0] + " to " + \
+        list_of_included_asset_classes[1] + "."
+    return {
+        "speech": speech,
+        "displayText": speech,
+        # "data": data,
+        # "contextOut": [],
+        "source": "bolu-iShares-webhook-mvp"
+    }
 
 
 def tellMeAbout(fund_name):
